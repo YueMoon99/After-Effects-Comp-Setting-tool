@@ -1,9 +1,6 @@
 # AE 合成设置批量修改工具 / AE Batch Comp Settings Modifier.
-
-# Scroll down for the English version.
-
+## Scroll down for English introduction.
 一款轻量开源的 After Effects 脚本，可批量修改合成属性（时长、帧率、尺寸），支持嵌套子合成同步处理。
-
 ## 🌟 功能特性
 批量修改所选合成、图层及所有嵌套子合成的时长（无限层级）
 批量调整多个合成的帧率
