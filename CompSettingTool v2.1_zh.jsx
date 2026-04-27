@@ -1,5 +1,3 @@
-﻿// AE脚本：批量合成属性修改器
-// 功能：通过输入和按钮修改选中合成的时长、帧率和尺寸
 (function(thisObj) { 
     var isDockablePanel = (thisObj instanceof Panel);
     var mainWindow;
@@ -28,7 +26,7 @@
     durationInput.size = [100, 25];
     durationInput.helpTip = "格式：时:分:秒:帧（例：0:00:05:00 = 5秒）";
 
-    // 时长修改选项单选按钮组（左对齐）
+    // 时长修改选项单选按钮组
     var durationOptionGroup = mainWindow.add("group");
     durationOptionGroup.orientation = "column";
     durationOptionGroup.alignment = ["left", "top"];
@@ -92,7 +90,6 @@
     FinalText.size = [350, 15];
     FinalText.alignment = ["left", "center"];
    
-    // 解析时长字符串
     function parseDuration(durationStr, frameRate) {
         var parts = durationStr.split(":");
         if (parts.length !== 4) throw new Error("无效时长格式！请用 时:分:秒:帧");
@@ -104,7 +101,6 @@
         return totalSeconds;
     }
 
-    // 解析合成尺寸
     function parseCompSize(sizeStr) {
         var parts = sizeStr.split("*");
         if (parts.length !== 2) throw new Error("无效尺寸格式！请用 宽度*高度");
@@ -121,7 +117,6 @@
         return [width, height];
     }
 
-    // 获取选中的合成
     function getSelectedCompositions() {
         var comps = [];
         for (var i = 0; i < app.project.selection.length; i++) {
@@ -133,9 +128,6 @@
         return comps;
     }
 
-    /**
-     * 选项1处理：修改所有内容且子合成穿透
-     */
     function recursiveModifyCompAndLayers(comp, targetDuration, processedComps, stats) {
         if (processedComps[comp.id]) return;
         processedComps[comp.id] = true;
@@ -154,9 +146,6 @@
         }
     }
 
-    /**
-     * 选项2处理：仅修改出点大于等于合成出点的图层和子合成
-     */
     function modifyOnlyOverlappingLayers(comp, targetDuration, processedComps, stats) {
         if (processedComps[comp.id]) return;
         processedComps[comp.id] = true;
@@ -178,17 +167,13 @@
         }
     }
 
-    /**
-     * 选项3处理：仅修改合成时长，不处理内容
-     */
+
     function modifyOnlyCompDuration(comp, targetDuration, stats) {
         comp.duration = targetDuration;
         stats.totalComps++;
     }
 
-    /**
-     * 递归应用帧率到子合成
-     */
+
     function applyFrameRateRecursive(comp, frameRate, processedComps) {
         if (processedComps[comp.id]) return;
         processedComps[comp.id] = true;
@@ -203,9 +188,7 @@
         }
     }
 
-    /**
-     * 递归应用尺寸到子合成
-     */
+
     function applySizeRecursive(comp, width, height, processedComps) {
         if (processedComps[comp.id]) return;
         processedComps[comp.id] = true;
@@ -221,7 +204,6 @@
         }
     }
 
-    // 时长按钮点击事件
     durationButton.onClick = function() {
         app.beginUndoGroup("修改合成时长");
         try {
@@ -262,7 +244,6 @@
         app.endUndoGroup();
     };
 
-    // 帧率按钮点击事件
     frameRateButton.onClick = function() {
         app.beginUndoGroup("修改合成帧率");
         try {
@@ -294,7 +275,6 @@
         app.endUndoGroup();
     };
 
-    // 尺寸按钮点击事件
     compSizeButton.onClick = function() {
         app.beginUndoGroup("修改合成尺寸");
         try {
@@ -328,7 +308,6 @@
         app.endUndoGroup();
     };
 
-    // 窗口显示逻辑
     if (isDockablePanel) {
         mainWindow.layout.layout(true);
     } else {
