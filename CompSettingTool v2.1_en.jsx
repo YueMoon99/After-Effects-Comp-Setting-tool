@@ -1,6 +1,4 @@
-﻿// AE Script: Batch Comp Property Modifier
-// Function: Modify duration, frame rate and size of selected comps via inputs/buttons
-(function(thisObj) { 
+﻿(function(thisObj) { 
     var isDockablePanel = (thisObj instanceof Panel);
     var mainWindow;
 
@@ -28,7 +26,7 @@
     durationInput.size = [100, 25];
     durationInput.helpTip = "Format: H:M:S:F (e.g., 0:00:05:00 = 5s)";
 
-    // Duration option radio group (left-aligned)
+    // Duration option radio group
     var durationOptionGroup = mainWindow.add("group");
     durationOptionGroup.orientation = "column";
     durationOptionGroup.alignment = ["left", "top"];
@@ -76,7 +74,6 @@
     compSizeInput.size = [100, 25];
     compSizeInput.helpTip = "Format: Width*Height (e.g., 1280 * 720)";
 
-    // Comp size sub-comp penetration checkbox
     var compSizePenetrate = mainWindow.add("checkbox", undefined, "Sub-comp Penetration");
     compSizePenetrate.alignment = ["left", "center"];
 
@@ -84,7 +81,6 @@
     compSizeButton.size = [260, 30];
     compSizeButton.alignment = ["left", "center"];
     
-    // Open source notice
     var FinalText = mainWindow.add("statictext", undefined, "——————————————————————");
     FinalText.size = [350, 15];
     FinalText.alignment = ["left", "center"];
@@ -92,7 +88,6 @@
     FinalText.size = [350, 15];
     FinalText.alignment = ["left", "center"];
 
-    // Parse duration string
     function parseDuration(durationStr, frameRate) {
         var parts = durationStr.split(":");
         if (parts.length !== 4) throw new Error("Invalid format! Use H:M:S:F");
@@ -104,7 +99,6 @@
         return totalSeconds;
     }
 
-    // Parse comp size (fix trim error)
     function parseCompSize(sizeStr) {
         var parts = sizeStr.split("*");
         if (parts.length !== 2) throw new Error("Invalid format! Use Width*Height");
@@ -121,7 +115,6 @@
         return [width, height];
     }
 
-    // Get selected compositions
     function getSelectedCompositions() {
         var comps = [];
         for (var i = 0; i < app.project.selection.length; i++) {
@@ -133,9 +126,7 @@
         return comps;
     }
 
-    /**
-     * Option 1: Modify all content + sub-comp penetration
-     */
+
     function recursiveModifyCompAndLayers(comp, targetDuration, processedComps, stats) {
         if (processedComps[comp.id]) return;
         processedComps[comp.id] = true;
@@ -154,9 +145,6 @@
         }
     }
 
-    /**
-     * Option 2: Only modify layers with outPoint ≥ comp outPoint + sub-comps
-     */
     function modifyOnlyOverlappingLayers(comp, targetDuration, processedComps, stats) {
         if (processedComps[comp.id]) return;
         processedComps[comp.id] = true;
@@ -178,17 +166,11 @@
         }
     }
 
-    /**
-     * Option 3: Only modify comp duration, no content change
-     */
     function modifyOnlyCompDuration(comp, targetDuration, stats) {
         comp.duration = targetDuration;
         stats.totalComps++;
     }
 
-    /**
-     * Recursively apply frame rate to sub-comps
-     */
     function applyFrameRateRecursive(comp, frameRate, processedComps) {
         if (processedComps[comp.id]) return;
         processedComps[comp.id] = true;
@@ -203,9 +185,6 @@
         }
     }
 
-    /**
-     * Recursively apply size to sub-comps
-     */
     function applySizeRecursive(comp, width, height, processedComps) {
         if (processedComps[comp.id]) return;
         processedComps[comp.id] = true;
@@ -221,7 +200,6 @@
         }
     }
 
-    // Duration button click event
     durationButton.onClick = function() {
         app.beginUndoGroup("Modify Comp Durations");
         try {
@@ -262,7 +240,6 @@
         app.endUndoGroup();
     };
 
-    // Frame rate button click event
     frameRateButton.onClick = function() {
         app.beginUndoGroup("Modify Comp Frame Rate");
         try {
@@ -294,7 +271,6 @@
         app.endUndoGroup();
     };
 
-    // Comp size button click event
     compSizeButton.onClick = function() {
         app.beginUndoGroup("Modify Comp Size");
         try {
@@ -328,7 +304,6 @@
         app.endUndoGroup();
     };
 
-    // Window display logic
     if (isDockablePanel) {
         mainWindow.layout.layout(true);
     } else {
